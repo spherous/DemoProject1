@@ -16,7 +16,8 @@ Existing games drawing inspiration from: Diablo 2, Path of Exile, Minecraft, Tor
 Current focus is on movement and targeting mechanics. Currently set up to move with mouse clicks.
 Designing targeting system to assist the player in aiming attacks, skills, and spells in the proper direction.
 
-Future plan is a chunk system, similar to Minecraft, to allow the world to be expansive, and versitile. 
+Future plan is a chunk system, similar to Minecraft, to allow the world to be expansive, and versitile.
+Currently looking to impliment quad tree to solve performance. Working in conjunction with chunks.
 Chunk system will save on processing power for the very limited hardware available to me at time of commiting this.
 
 Will detail and flesh out these systems as they become more apparent, with proper documentation.
