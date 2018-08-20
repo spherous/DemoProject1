@@ -1,7 +1,7 @@
 import pygame
 import math
 from settings import *
-from UI import Hitbar
+from UI import *
 from SpriteSheet import *
 vec = pygame.math.Vector2
 
@@ -41,7 +41,7 @@ class Enemy(pygame.sprite.Sprite):
         
         self.vel = vec(0, 0)        
         #Set the x and y grid coordinate
-        self.pos = vec(x, y) * TILESIZE
+        self.pos = vec(x, y)
         #Set player rotation
         self.rotation = 0
         
@@ -77,6 +77,9 @@ class Enemy(pygame.sprite.Sprite):
         self.attackSpeed = 1000
         #The timer between auto attacks
         self.attackTimer = 0
+        
+        
+        self.game.qt.insert(self)
     
     #Define what hapens when searching for new target
     def newTarget(self):
@@ -140,6 +143,7 @@ class Enemy(pygame.sprite.Sprite):
         self.currentHealth -= damage
         #If that brings the health at or below 0, die
         if self.currentHealth <= 0:
+            self.game.qt.remove(self)
             #kill the hitbar
             self.hitbar.kill()
             #kill the creature
@@ -204,6 +208,9 @@ class Enemy(pygame.sprite.Sprite):
                     self.vel += self.acceleration * self.game.dt
                     #Move pos along that vector
                     self.pos += self.vel * self.game.dt + 0.5 * self.acceleration * self.game.dt ** 2
+                    
+                    self.game.qt.remove(self)
+                    self.game.qt.insert(self)
             
             #Update hitbox first, check collisions between hitbox and wall and handle them
             self.hitbox.centerx = self.pos.x
@@ -216,6 +223,8 @@ class Enemy(pygame.sprite.Sprite):
             
             #Apply regeneration
             self.regenerateHealth()
+            
+            
             
             
             

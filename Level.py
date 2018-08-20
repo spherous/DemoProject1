@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+vec = pygame.math.Vector2
 
 #Define the Map class
 #This class takes in a filename, opens that file, and creates the set that holds that map instance
@@ -43,15 +44,16 @@ class Wall(pygame.sprite.Sprite):
         #TODO: Change this to a sprite with many wall posibilities
         self.image = pygame.Surface((TILESIZE, TILESIZE))
         #Color the wall
-        self.image.fill(AQUA)
+        self.image.fill(PINK)
         #Get the wal rect
         self.rect = self.image.get_rect()
         
         #Set the x and y coordinates and draw the rect to the proper grid location
-        self.x = x
-        self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.pos = vec(x, y)
+        self.rect.x = self.pos.x * TILESIZE
+        self.rect.y = self.pos.y * TILESIZE
+        
+        self.game.qt.insert(self)
         
 class Chunk():
     pass

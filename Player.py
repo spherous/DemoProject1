@@ -1,8 +1,9 @@
 import pygame
 import math
 from settings import *
-from UI import Hitbar
+from UI import *
 from SpriteSheet import *
+from quadtree import *
 vec = pygame.math.Vector2
 
 #Define the whole Player class here
@@ -72,6 +73,9 @@ class Player(pygame.sprite.Sprite):
         #Distance to target, initilized as None
         self.targetDist = None
         
+        self.nearbyBox = Rectangle(self.pos.x, self.pos.y, self.targetRange, self.targetRange)
+        self.nearbyEntities = []
+        
         #Attack----------------------------
         #TODO: Expand to scale based on stats
         #Range for auto attacking target
@@ -81,7 +85,10 @@ class Player(pygame.sprite.Sprite):
         #The cooldown timer for auto attack
         self.attackTimer = 0
         #Basic auto atack damage
-        self.damage = 10 
+        self.damage = 10
+        
+        
+        self.game.qt.insert(self)
         
     #Do mouse movement    
     def newMovePoint(self, x, y):
@@ -213,7 +220,6 @@ class Player(pygame.sprite.Sprite):
             #Calculate the angle to current movePoint
             self.rotation = (self.vel).angle_to(vec(1, 0))
             self.image = pygame.transform.rotate(self.icon, self.rotation)
-            #self.rect = self.image.get_rect()
             self.rect.center = self.pos
             
             self.acceleration = vec(1, 0).rotate(-self.rotation)
@@ -230,6 +236,8 @@ class Player(pygame.sprite.Sprite):
             
             #Calculate the new distance to the movepoint
             self.distanceToMovePoint = math.hypot(self.pos.x - self.movePoint.x, self.pos.y - self.movePoint.y)
+            self.game.qt.remove(self)
+            self.game.qt.insert(self)
             
             
         #update x and y rects for the frame and check and handle collision between each
@@ -239,6 +247,9 @@ class Player(pygame.sprite.Sprite):
         self.checkCollision("y")    
         #Update rect center to be hitbox center    
         self.rect.center = self.hitbox.center
+        self.nearbyBox.x = self.pos.x
+        self.nearbyBox.y = self.pos.y
+        self.nearbyEntities = self.game.qt.query(self.nearbyBox, self.nearbyEntities)
         
         #Regen the players HP
         self.regenerateHealth()

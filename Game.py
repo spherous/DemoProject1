@@ -7,6 +7,7 @@ from Player import *
 from Level import *
 from Enemy import *
 from UI import *
+from quadtree import *
 
 #This is the Game class
 #Where the magic begins
@@ -36,26 +37,30 @@ class Game:
     
     #When new instance
     def new(self):
-        #create sprite groups
+        #create sprite groups------------------------------------------------
         self.active_sprite_list = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         
-        #Loop throught map and create level
+        #Setup QuadTree-------------------------------------------------------
+        self.boundry = Rectangle(self.map.width / 2, self.map.height / 2, self.map.width / 2, self.map.height / 2)
+        self.qt = QuadTree(self.boundry)
+        
+        #Loop throught map and create level------------------------------------
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == "1":
-                    Wall(self, col, row)
+                    self.wall = Wall(self, col, row)
                 if tile == "P":  
                     self.player = Player(self, col, row)
         
-        #Generate 10 random enemies
+        #Generate random enemies------------------------------------------------
         #TODO: Expand enemy generation, decide on how many to spawn, packs, packsize, types of, and level of the enemies for scaling
         for i in range(10):
-            col = random.randint(0, self.map.width / TILESIZE)
-            row = random.randint(0, self.map.height / TILESIZE)
-            self.enemy = Enemy(self, col, row)
+            x = random.randint(0, self.map.width)
+            y = random.randint(0, self.map.height)
+            self.enemy = Enemy(self, x, y)
         
         #Creates the camera from Camera class with parameters of the map's width  and height
         self.camera = Camera(self.map.width, self.map.height)
@@ -116,7 +121,11 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 #And if that button is Escape
                 if event.key == pygame.K_ESCAPE:
-                    self.quit() #Quit the game
+                    self.quit() #Quit the game 
+                elif event.key == pygame.K_SPACE:
+                    #self.player.nearbyEntities = self.qt.query(self.player.nearbyBox, self.player.nearbyEntities)
+                    print(self.player.nearbyEntities)
+                    #self.player.nearbyEntities = []
                     
                 #Old movement logic------------------------------------------    
                 #Key is left arrow or a
