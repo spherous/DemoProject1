@@ -72,29 +72,29 @@ class QuadTree():
     def remove(self, entity):
         if entity in self.entities:
             self.entities.remove(entity)
-            self.prune()
+            #self.prune()
             return True
         
         elif self.divided == True:
             if self.northwest.remove(entity):
-                self.prune()
+                #self.prune()
                 return True
             elif self.northeast.remove(entity):
-                self.prune()
+                #self.prune()
                 return True
             elif self.southwest.remove(entity):
-                self.prune()
+                #self.prune()
                 return True
             elif self.southeast.remove(entity):
-                self.prune()
+                #self.prune()
                 return True
         return False
             
                 
     def query(self, range, found = []):
-        for item in found:
-            if not range.contains(item):
-                found.remove(item)
+        #for item in found:
+        #    if not range.contains(item):
+        #        found.remove(item)
                 
         if self.boundry.intersects(range) != False:
             return

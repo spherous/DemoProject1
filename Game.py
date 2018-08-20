@@ -123,9 +123,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     self.quit() #Quit the game 
                 elif event.key == pygame.K_SPACE:
-                    #self.player.nearbyEntities = self.qt.query(self.player.nearbyBox, self.player.nearbyEntities)
                     print(self.player.nearbyEntities)
-                    #self.player.nearbyEntities = []
                     
                 #Old movement logic------------------------------------------    
                 #Key is left arrow or a

@@ -249,7 +249,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.hitbox.center
         self.nearbyBox.x = self.pos.x
         self.nearbyBox.y = self.pos.y
-        self.nearbyEntities = self.game.qt.query(self.nearbyBox, self.nearbyEntities)
+        self.nearbyEntities = self.game.qt.query(self.nearbyBox)
         
         #Regen the players HP
         self.regenerateHealth()
