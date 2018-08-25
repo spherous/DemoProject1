@@ -53,7 +53,9 @@ class Wall(pygame.sprite.Sprite):
         self.rect.x = self.pos.x * TILESIZE
         self.rect.y = self.pos.y * TILESIZE
         
-        self.game.qt.insert(self)
+        #self.game.qt.insert(self)
         
+    def get_rect(self):
+        return self.rect
 class Chunk():
     pass

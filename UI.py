@@ -5,11 +5,13 @@ from settings import *
 
 #Define Camera here
 #The Camera is the section of the map with the player object centered that is being displayed to the player
-class Camera:
+class Camera(object):
     #Construct with width and height of the map
     def __init__(self, width, height):
         #Make the camera rect beginning at 0, 0 with the width and height of the map
         self.camera = pygame.Rect(0, 0, width, height)
+        #self.rect = self.camera.get_rect()
+        self.rect = self.camera
         
         #Set the width and height
         self.width = width
@@ -32,6 +34,8 @@ class Camera:
         
         #Update the camera rect to proper location calculated
         self.camera = pygame.Rect(self.x, self.y, self.width, self.height)
+        
+        self.rect = self.camera
         
 #Define Hitbar
 #Pass this class any entity that has: x, y, currentHealth and maxHealth
@@ -76,6 +80,7 @@ class Hitbar(pygame.sprite.Sprite):
         self.rect.centery = self.y
         
         
-        
+    def get_rect(self):
+        return self.rect
         
         

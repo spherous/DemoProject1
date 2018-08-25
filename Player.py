@@ -3,7 +3,6 @@ import math
 from settings import *
 from UI import *
 from SpriteSheet import *
-from quadtree import *
 vec = pygame.math.Vector2
 
 #Define the whole Player class here
@@ -73,7 +72,7 @@ class Player(pygame.sprite.Sprite):
         #Distance to target, initilized as None
         self.targetDist = None
         
-        self.nearbyBox = Rectangle(self.pos.x, self.pos.y, self.targetRange, self.targetRange)
+        #self.nearbyBox = Rectangle(self.pos.x, self.pos.y, self.targetRange, self.targetRange)
         self.nearbyEntities = []
         
         #Attack----------------------------
@@ -88,7 +87,10 @@ class Player(pygame.sprite.Sprite):
         self.damage = 10
         
         
-        self.game.qt.insert(self)
+        #self.game.qt.insert(self)
+        
+    def get_rect(self):
+        return self.rect
         
     #Do mouse movement    
     def newMovePoint(self, x, y):
@@ -236,20 +238,20 @@ class Player(pygame.sprite.Sprite):
             
             #Calculate the new distance to the movepoint
             self.distanceToMovePoint = math.hypot(self.pos.x - self.movePoint.x, self.pos.y - self.movePoint.y)
-            self.game.qt.remove(self)
-            self.game.qt.insert(self)
+            #self.game.qt.remove(self)
+            #self.game.qt.insert(self)
             
             
         #update x and y rects for the frame and check and handle collision between each
         self.hitbox.centerx = self.pos.x
-        self.checkCollision("x")        
+        #self.checkCollision("x")        
         self.hitbox.centery = self.pos.y
-        self.checkCollision("y")    
+        #self.checkCollision("y")    
         #Update rect center to be hitbox center    
         self.rect.center = self.hitbox.center
-        self.nearbyBox.x = self.pos.x
-        self.nearbyBox.y = self.pos.y
-        self.nearbyEntities = self.game.qt.query(self.nearbyBox)
+        #self.nearbyBox.x = self.pos.x
+        #self.nearbyBox.y = self.pos.y
+        #self.nearbyEntities = self.game.qt.query(self.nearbyBox)
         
         #Regen the players HP
         self.regenerateHealth()

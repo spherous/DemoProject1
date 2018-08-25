@@ -12,14 +12,12 @@ class Enemy(pygame.sprite.Sprite):
     #Constructor requires the game, an x and a y location
     def __init__(self, game, x, y):
         #Create the groups for the enemy, the active sprite list and enemies list
-        self.groups = game.active_sprite_list, game.enemies
+        self.groups = game.active_sprite_list, game.enemies                                  
         #Build the sprites for the groups
         pygame.sprite.Sprite.__init__(self, self.groups)
         
         #This is the game
         self.game = game
-        
-        self.active = True
         
         #Give type of "Enemy"
         self.type = "Enemy"
@@ -79,7 +77,11 @@ class Enemy(pygame.sprite.Sprite):
         self.attackTimer = 0
         
         
-        self.game.qt.insert(self)
+        #self.game.qt.insert(self)
+        
+
+    def get_rect(self):
+        return self.rect
     
     #Define what hapens when searching for new target
     def newTarget(self):
@@ -143,7 +145,6 @@ class Enemy(pygame.sprite.Sprite):
         self.currentHealth -= damage
         #If that brings the health at or below 0, die
         if self.currentHealth <= 0:
-            self.game.qt.remove(self)
             #kill the hitbar
             self.hitbar.kill()
             #kill the creature
@@ -161,70 +162,68 @@ class Enemy(pygame.sprite.Sprite):
         self.target.takeDamage(self.damage)
     
     #Here is what happens frame by frame for this enemy
-    def update(self):
-        if self.active:
-            #If enemy has no current target
-            if self.target == None:
-                #Try to find a new target
-                self.newTarget() 
+    def update(self):          
+        #if self.game.camera.camera.contains(self.rect):
+        #If enemy has no current target
+        if self.target == None:
+            #Try to find a new target
+            self.newTarget() 
+        
+        #Enemy must already have a target 
+        else:
+            #Get the next waypoint towards target
+            self.newWaypoint() 
             
-            #Enemy must already have a target 
-            else:
-                #Get the next waypoint towards target
-                self.newWaypoint() 
+            #Make sure target is still in range
+            if self.distanceToTarget > self.aggroRange:
+                #If target not in range, untarget
+                self.target = None 
                 
-                #Make sure target is still in range
-                if self.distanceToTarget > self.aggroRange:
-                    #If target not in range, untarget
-                    self.target = None 
-                    
-                elif self.distanceToTarget <= self.attackRange:
-                    #attack when in range and create a cooldown on the attack
-                    now = pygame.time.get_ticks()
-                    if now - self.attackTimer > self.attackSpeed:    
-                        self.attack()
-                        self.attackTimer = now
+            elif self.distanceToTarget <= self.attackRange:
+                #attack when in range and create a cooldown on the attack
+                now = pygame.time.get_ticks()
+                if now - self.attackTimer > self.attackSpeed:    
+                    self.attack()
+                    self.attackTimer = now
+            
+            else: #Get in range
+                #Calculate the angle to current target
+                self.rotation = (self.vel).angle_to(vec(1, 0))
+                #rotate the sprite based on that angle
+                self.image = pygame.transform.rotate(self.icon, self.rotation)
+                #Update the rect center to be the position of the enemy
+                self.rect.center = self.pos
                 
-                else: #Get in range
-                    #Calculate the angle to current target
-                    self.rotation = (self.vel).angle_to(vec(1, 0))
-                    #rotate the sprite based on that angle
-                    self.image = pygame.transform.rotate(self.icon, self.rotation)
-                    #Update the rect center to be the position of the enemy
-                    self.rect.center = self.pos
-                    
-                    #calculate acceleration
-                    self.acceleration = vec(1, 0).rotate(-self.rotation)
-                    
-                    #Adjust acceleration if another enemy is near
-                    self.avoidEnemies()
-                    
-                    #Adjust acceleration based on enemy speed
-                    self.acceleration.scale_to_length(self.enemySpeed)
-                    #Update acceleration with velocity vector
-                    self.acceleration += self.vel * -1
-                    
-                    #Move along the vel vector by acceleration and delta time
-                    self.vel += self.acceleration * self.game.dt
-                    #Move pos along that vector
-                    self.pos += self.vel * self.game.dt + 0.5 * self.acceleration * self.game.dt ** 2
-                    
-                    self.game.qt.remove(self)
-                    self.game.qt.insert(self)
-            
-            #Update hitbox first, check collisions between hitbox and wall and handle them
-            self.hitbox.centerx = self.pos.x
-            self.checkCollision("x")
-            self.hitbox.centery = self.pos.y
-            self.checkCollision("y")
-            
-            #Update rect center to be hitbox center after all collisions have been handled
-            self.rect.center = self.hitbox.center
-            
-            #Apply regeneration
-            self.regenerateHealth()
-            
-            
-            
-            
-            
+                #calculate acceleration
+                self.acceleration = vec(1, 0).rotate(-self.rotation)
+                
+                #Adjust acceleration if another enemy is near
+                #self.avoidEnemies()
+                
+                #Adjust acceleration based on enemy speed
+                self.acceleration.scale_to_length(self.enemySpeed)
+                #Update acceleration with velocity vector
+                self.acceleration += self.vel * -1
+                
+                #Move along the vel vector by acceleration and delta time
+                self.vel += self.acceleration * self.game.dt
+                #Move pos along that vector
+                self.pos += self.vel * self.game.dt + 0.5 * self.acceleration * self.game.dt ** 2
+                
+                #self.game.qt.remove(self)
+                #self.game.qt.insert(self)
+        
+        #Update hitbox first, check collisions between hitbox and wall and handle them
+        self.hitbox.centerx = self.pos.x
+        #self.checkCollision("x")
+        self.hitbox.centery = self.pos.y
+        #self.checkCollision("y")
+        
+        #Update rect center to be hitbox center after all collisions have been handled
+        self.rect.center = self.hitbox.center
+        
+        #Apply regeneration
+        self.regenerateHealth()
+        
+        
+        

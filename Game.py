@@ -7,7 +7,7 @@ from Player import *
 from Level import *
 from Enemy import *
 from UI import *
-from quadtree import *
+from Quadtree import *
 
 #This is the Game class
 #Where the magic begins
@@ -44,8 +44,8 @@ class Game:
         self.walls = pygame.sprite.Group()
         
         #Setup QuadTree-------------------------------------------------------
-        self.boundry = Rectangle(self.map.width / 2, self.map.height / 2, self.map.width / 2, self.map.height / 2)
-        self.qt = QuadTree(self.boundry)
+        #self.boundry = Rectangle(self.map.width / 2, self.map.height / 2, self.map.width / 2, self.map.height / 2)
+        #self.qt = QuadTree(self.boundry)
         
         #Loop throught map and create level------------------------------------
         for row, tiles in enumerate(self.map.data):
@@ -64,7 +64,8 @@ class Game:
         
         #Creates the camera from Camera class with parameters of the map's width  and height
         self.camera = Camera(self.map.width, self.map.height)
-    
+        
+     
     #Game loop. Set self.playing to False to end the game
     def run(self):
         self.playing = True
@@ -80,11 +81,19 @@ class Game:
         sys.exit()
         
     #Define what needs to be updated each frame    
-    def update(self):
+    def update(self):        
+        
         #Update all active sprites
         self.active_sprite_list.update()
+        
         #Update the camera
         self.camera.update(self.player)
+        
+        self.tree = Quadtree(0, pygame.Rect(0,0,self.map.width,self.map.height), self.active_sprite_list)
+        self.tree.update()
+        #self.onScreen = []
+        #self.onScreen = self.tree.query(self.camera, self.onScreen)
+        
        
     #Draw the grid - not for final project.
     #TODO: create toggle in UI for testing enabled
@@ -99,12 +108,16 @@ class Game:
         #Fill the screen with a background color set in settings
         self.screen.fill(BGCOLOR)
         
-        #self.draw_grid() #Comment to toggle grid on and off
+        if DRAWGRID:
+            self.draw_grid()
+            
+        self.tree.draw(self.camera, self.screen)
         
         #Loop through sprites in the active sprite list
         for sprite in self.active_sprite_list:
-            #Draw that sprite to sceen at the location set by the camera 
+            #Draw that sprite to sceen at the location set by the camera
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+            
             
         #Flip to next frame
         pygame.display.flip()
