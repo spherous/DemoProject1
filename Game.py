@@ -43,6 +43,8 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         
+        self.tree = Quadtree(0, pygame.Rect(0,0,self.map.width,self.map.height))
+        
         #Setup QuadTree-------------------------------------------------------
         #self.boundry = Rectangle(self.map.width / 2, self.map.height / 2, self.map.width / 2, self.map.height / 2)
         #self.qt = QuadTree(self.boundry)
@@ -65,6 +67,12 @@ class Game:
         #Creates the camera from Camera class with parameters of the map's width  and height
         self.camera = Camera(self.map.width, self.map.height)
         
+        
+        self.mouseRect = mouseRect(self)
+        self.inMouseRect = []
+        
+        self.onScreen = []
+     
      
     #Game loop. Set self.playing to False to end the game
     def run(self):
@@ -89,10 +97,10 @@ class Game:
         #Update the camera
         self.camera.update(self.player)
         
-        self.tree = Quadtree(0, pygame.Rect(0,0,self.map.width,self.map.height), self.active_sprite_list)
-        self.tree.update()
-        #self.onScreen = []
+        self.mouseRect.update()
+        
         #self.onScreen = self.tree.query(self.camera, self.onScreen)
+        #print(self.onScreen)
         
        
     #Draw the grid - not for final project.
@@ -118,7 +126,13 @@ class Game:
             #Draw that sprite to sceen at the location set by the camera
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             
-            
+        pygame.draw.rect(self.screen, (0, 128, 0), self.mouseRect, 2)
+        self.inMouseRect = self.tree.query(self.mouseRect, self.inMouseRect)
+        print(self.inMouseRect)
+        
+        for sprite in self.inMouseRect:
+            pygame.draw.rect(self.screen, GREEN, sprite.rect, 3)
+        
         #Flip to next frame
         pygame.display.flip()
     

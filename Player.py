@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
         self.damage = 10
         
         
-        #self.game.qt.insert(self)
+        self.game.tree.add_entity(self)
         
     def get_rect(self):
         return self.rect
@@ -255,3 +255,6 @@ class Player(pygame.sprite.Sprite):
         
         #Regen the players HP
         self.regenerateHealth()
+        
+        self.game.tree.remove_entity(self)
+        self.game.tree.add_entity(self)

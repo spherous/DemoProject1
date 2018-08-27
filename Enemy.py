@@ -77,7 +77,7 @@ class Enemy(pygame.sprite.Sprite):
         self.attackTimer = 0
         
         
-        #self.game.qt.insert(self)
+        self.game.tree.add_entity(self)
         
 
     def get_rect(self):
@@ -226,4 +226,6 @@ class Enemy(pygame.sprite.Sprite):
         self.regenerateHealth()
         
         
+        self.game.tree.remove_entity(self)
+        self.game.tree.add_entity(self)
         

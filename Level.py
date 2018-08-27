@@ -50,12 +50,14 @@ class Wall(pygame.sprite.Sprite):
         
         #Set the x and y coordinates and draw the rect to the proper grid location
         self.pos = vec(x, y)
+        
         self.rect.x = self.pos.x * TILESIZE
         self.rect.y = self.pos.y * TILESIZE
         
-        #self.game.qt.insert(self)
+        self.game.tree.add_entity(self)
         
     def get_rect(self):
         return self.rect
+    
 class Chunk():
     pass
