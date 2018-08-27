@@ -101,6 +101,7 @@ class Quadtree(object):
                 
             for branch in self.branches:
                 branch.query(rect, found)
+                return found
         
         #Returns that updated list of all entity objects within the given rect
         return found
